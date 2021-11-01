@@ -1,5 +1,6 @@
 package com.epam.esm.config;
 
+import com.epam.esm.exception.ExceptionHandlerFilter;
 import com.epam.esm.security.JwtConfigurer;
 import com.epam.esm.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+
+import javax.servlet.ServletException;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -36,6 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .httpBasic().disable()
                 .csrf().disable()
+                .addFilterBefore(exceptionHandlerFilter(), LogoutFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
@@ -51,5 +56,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
+    }
+
+    @Bean
+    public ExceptionHandlerFilter exceptionHandlerFilter() throws ServletException {
+        ExceptionHandlerFilter exceptionHandlerFilter = new ExceptionHandlerFilter();
+        exceptionHandlerFilter.afterPropertiesSet();
+        return exceptionHandlerFilter;
     }
 }
