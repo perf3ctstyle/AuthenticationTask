@@ -1,5 +1,8 @@
 package com.epam.esm.config;
 
+import com.epam.esm.constant.GenericExceptionMessageConstants;
+import com.epam.esm.entity.Role;
+import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.hibernate.GiftCertificateDao;
 import com.epam.esm.hibernate.RoleDao;
 import com.epam.esm.hibernate.TagDao;
@@ -31,6 +34,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @Configuration
 @ComponentScan("com.epam.esm")
@@ -42,6 +46,8 @@ public class ApplicationConfig implements WebMvcConfigurer {
     private static final String MESSAGE_SOURCE = "messageSource";
     private static final String MESSAGES_BASENAME = "languages/language";
     private static final String LOCALE = "locale";
+    private static final String ROLE_USER = "ROLE_USER";
+    private static final String ROLE = "ROLE";
 
     @Bean
     public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(DataSource dataSource) {
@@ -94,7 +100,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     public UserService userService(EntityManager entityManager, BCryptPasswordEncoder passwordEncoder) {
-        return new UserService(userDao(entityManager), roleDao(entityManager), passwordEncoder);
+        return new UserService(userDao(entityManager), passwordEncoder);
     }
 
     @Bean
@@ -119,6 +125,12 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Bean
     public RoleDao roleDao(EntityManager entityManager) {
         return new RoleDao(entityManager);
+    }
+
+    @Bean(name = "roleUser")
+    public Role roleUser(RoleDao roleDao) {
+        Optional<Role> optionalRoleUser = roleDao.getByName(ROLE_USER);
+        return optionalRoleUser.orElseThrow(() -> new ResourceNotFoundException(GenericExceptionMessageConstants.RESOURCE_NOT_FOUND, ROLE));
     }
 
     @Bean(MESSAGE_SOURCE)

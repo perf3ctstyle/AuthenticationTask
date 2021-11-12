@@ -10,10 +10,12 @@ import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.hibernate.RoleDao;
 import com.epam.esm.hibernate.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,17 +32,17 @@ import java.util.Optional;
 public class UserService implements com.epam.esm.service.Service<User> {
 
     private final UserDao userDao;
-    private final RoleDao roleDao;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    @Resource
+    @Qualifier("roleUser")
+    private Role roleUser;
+
     private static final String USER = "User";
-    private static final String ROLE = "Role";
-    private static final String ROLE_USER = "ROLE_USER";
 
     @Autowired
-    public UserService(UserDao userDao, RoleDao roleDao, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserDao userDao, BCryptPasswordEncoder passwordEncoder) {
         this.userDao = userDao;
-        this.roleDao = roleDao;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -88,8 +90,6 @@ public class UserService implements com.epam.esm.service.Service<User> {
      * @return {@link User} object's id which was created in a database.
      */
     public long create(User user) {
-        Optional<Role> optionalRoleUser = roleDao.getByName(ROLE_USER);
-        Role roleUser = optionalRoleUser.orElseThrow(() -> new ResourceNotFoundException(GenericExceptionMessageConstants.RESOURCE_NOT_FOUND, ROLE));
         List<Role> userRoles = Collections.singletonList(roleUser);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));

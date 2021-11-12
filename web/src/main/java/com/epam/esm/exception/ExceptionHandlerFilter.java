@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
-    private static final int INTERNAL_SERVER_ERROR_CODE = 50000;
+    private static final int INTERNAL_SERVER_ERROR_CODE = 40300;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

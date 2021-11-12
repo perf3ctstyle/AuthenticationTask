@@ -6,6 +6,7 @@ import com.epam.esm.hibernate.UserDao;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,8 @@ import java.util.Optional;
 public class UserServiceTest {
 
     private final UserDao userDao = Mockito.mock(UserDao.class);
-    private final UserService userService = new UserService(userDao);
+    private final BCryptPasswordEncoder passwordEncoder = Mockito.mock(BCryptPasswordEncoder.class);
+    private final UserService userService = new UserService(userDao, passwordEncoder);
 
     private final List<User> users = new ArrayList<>();
     private final User user = new User();
