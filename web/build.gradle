@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group 'com.epam.esm'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.5.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.5.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.5.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '2.5.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '2.5.4'
+
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.5.7.Final'
+    implementation group: 'org.springframework', name: 'spring-orm', version: '5.3.10'
+
+    implementation 'com.h2database:h2:1.4.200'
+
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+
+    implementation project(':service')
+    implementation project(':core')
+    implementation project(':dao-hibernate')
+}
+
+test {
+    useJUnitPlatform()
+}
